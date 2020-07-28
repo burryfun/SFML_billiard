@@ -24,6 +24,7 @@ public:
 	~Board();
 	
 	std::vector <Line> getBorderLines();
+	std::vector <Line> getHoles();
 
 	void update();
 	void render(sf::RenderTarget* target);
@@ -31,7 +32,9 @@ private:
 	sf::Sprite sprite;
 	sf::Texture texture;
 	std::vector <Line> lines;
+	std::vector <Line> holes;
 	void initBorderLines();
+	void initHoles();
 };
 
 

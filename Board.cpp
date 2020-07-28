@@ -16,6 +16,10 @@ Board::Board()
 	sprite.setTexture(texture);
 	sprite.setPosition(572.5f, 25.f);
 	initBorderLines();
+	
+	
+	initHoles();
+
 }
 
 Board::~Board()
@@ -25,8 +29,8 @@ Board::~Board()
 
 void Board::initBorderLines()
 {
-	Line lineTopL(601.5f, 40.f, 616.5f, 55.f);
-	Line lineTop(616.5, 55.f, 983.5, 55.f);
+	Line lineTopL(602.5f, 40.f, 617.f, 55.f);
+	Line lineTop(617.f, 55.f, 983.5, 55.f);
 	Line lineTopR(983.5f, 55.f, 998.5f, 40.f);
 	lines.push_back(lineTopL);
 	lines.push_back(lineTop);
@@ -48,7 +52,7 @@ void Board::initBorderLines()
 
 	Line lineDownL(998.5f, 860.f, 983.5f, 845.f);
 	Line lineDown(983.5f, 845.f, 616.5f, 845.f);
-	Line lineDownR(616.5f, 845.f, 601.5f, 860.5f);
+	Line lineDownR(616.5f, 845.f, 602.5f, 860.5f);
 	lines.push_back(lineDownL);
 	lines.push_back(lineDown);
 	lines.push_back(lineDownR);
@@ -66,14 +70,37 @@ void Board::initBorderLines()
 	lines.push_back(lineTopLeftL);
 	lines.push_back(lineTopLeft);
 	lines.push_back(lineTopLeftR);
+}
 
+void Board::initHoles()
+{
+	Line holeTopLeft(582.5f, 49.f, 596.5f, 35.f);
+	holes.push_back(holeTopLeft);
 
+	Line holeTopRight(1003.5f, 35.f, 1017.5f, 49.f); 
+	holes.push_back(holeTopRight);
 
+	Line holeRight(1012.5f, 442.f, 1012.5f, 458.5f);
+	holes.push_back(holeRight);
+
+	Line holeDownRight(1017.5f, 851.f, 1003.5f, 865.f);
+	holes.push_back(holeDownRight);
+
+	Line holeDownLeft(596.5f, 865.5f, 582.5f, 851.f);
+	holes.push_back(holeDownLeft);
+
+	Line holeLeft(587.5f, 458.5f, 587.5f, 442.5f);
+	holes.push_back(holeLeft);
 }
 
 std::vector<Line> Board::getBorderLines()
 {
 	return lines;
+}
+
+std::vector <Line> Board::getHoles()
+{
+	return holes;
 }
 
 void Board::update()
@@ -84,8 +111,12 @@ void Board::update()
 void Board::render(sf::RenderTarget* target)
 {
 	target->draw(sprite);
-	//draw boardLines
-	/*for (auto i : lines)
+	//draw board and hole Lines
+	/*for (auto i : holes)
+	{
+		target->draw(i);
+	}
+	for (auto i : lines)
 	{
 		target->draw(i);
 	}*/

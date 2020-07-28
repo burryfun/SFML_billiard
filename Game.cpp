@@ -36,6 +36,8 @@ void Game::initWindow()
 		}
 	}	
 	dragged = false;
+	move = false;
+	goal = false;
 }
 
 Game::Game()
@@ -78,6 +80,7 @@ void Game::pollEvents()
 					black->setVelocity(sf::Vector2f((black->getPosition().x - m_mouse.x),
 															(black->getPosition().y - m_mouse.y)));
 					dragged = false;
+					move = true;
 				}
 				break;
 
@@ -124,7 +127,35 @@ void Game::collisionCircleLine(Ball *circle, Line *line)
 									p.y -distance.y * overlap / distanceBetween);
 		}
 	}
+}
 
+void Game::collisionCircleHole(Ball *circle, Line *hole)
+{
+	sf::Vector2f s = hole->getPoints()[0].position;	
+	sf::Vector2f e = hole->getPoints()[1].position;	
+	sf::Vector2f p = circle->getPosition();
+
+	sf::Vector2f se = e - s;
+	sf::Vector2f ps = p - s;
+
+	float lengthLine = (e.x - s.x)*(e.x - s.x) + (e.y - s.y)*(e.y - s.y);
+	float t = ((ps.x * se.x) + (ps.y * se.y)) / lengthLine;
+
+	sf::Vector2f st;
+	st.x = s.x + t*se.x; 
+	st.y = s.y + t*se.y;
+	
+	sf::Vector2f distance = p - st;
+	float distanceBetween = sqrtf(distance.x*distance.x + distance.y*distance.y);
+		
+	if (distanceBetween <= circle->getRadius())
+	{
+		goal = true;
+		static int pos = 0;
+		circle->setVelocity(sf::Vector2f(0.f, 0.f));
+		circle->setPosition(ballRadius + pos, ballRadius);
+		pos += 2*ballRadius;
+	}
 
 }
 
@@ -180,6 +211,7 @@ void Game::update()
 	float deltaTime = 0.f;
 	deltaTime = clock.restart().asSeconds();
 	pollEvents();
+	gui.update();
 	for (auto whiteBall : whiteBalls)
 	{
 		for (Line line : board.getBorderLines())
@@ -193,6 +225,25 @@ void Game::update()
 		}
 		collisionCircles(black, whiteBall);
 		whiteBall->update(*window, deltaTime);
+
+
+		std::cout << gui.getCurrentPlayer().number << std::endl;
+		for (auto hole : board.getHoles())
+		{
+			collisionCircleHole(whiteBall, &hole);
+		}
+		//gameLogic
+		if (goal)
+		{
+			gui.addPoints(gui.getCurrentPlayer());
+			goal = false;
+		}
+		if (move && black->getVelocity() == sf::Vector2f(0.f, 0.f))
+		{
+			move = false;
+			gui.setCurrentPlayer(1 - gui.getCurrentPlayer().number);
+		}
+
 	}
 	black->update(*window, deltaTime);
 }
@@ -200,7 +251,7 @@ void Game::update()
 void Game::render()
 {
 	window->clear();
-	
+	window->draw(gui);	
 	board.render(window);
 	for (auto i : whiteBalls)
 	{
