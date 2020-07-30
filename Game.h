@@ -13,18 +13,22 @@
 #include "GUI.h"
 #include "Board.h"
 #include "Ball.h"
+#include "Line.h"
 
 class Game
 {
 public:
 	Game();
 	~Game();
-	GUI gui;
-	Board board;
+	GUI* gui;
+	Board* board;
 	Ball* black;
 	std::vector <Ball*> whiteBalls;
+	Ball* draggedBall;
+	Line* direction;
 	sf::Clock clock;
 	const bool running() const;
+	bool restartGame;
 	bool dragged;
 	bool move;
 	bool goal;
@@ -32,7 +36,10 @@ public:
 	void collisionCircleLine(Ball* circle, Line* line);
 	void collisionCircles(Ball* ball1, Ball* ball2);
 	void collisionCircleHole(Ball* circle, Line* hole);
-
+	
+	void restart();	
+	void updateAllCollisions();
+	void updateGameLogic();
 	void update();
 	void render();
 
@@ -43,4 +50,5 @@ private:
 	sf::Vector2f		m_mouse;
 	const float			ballRadius = 9.f;
 	void				initWindow();
+	void				initGame();
 };

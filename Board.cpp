@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -12,7 +13,7 @@
 
 Board::Board()
 {
-	texture.loadFromFile("/home/user/C++/SFML/billiard/texture/textureBoard.png");
+	texture.loadFromFile("/home/user/C++/SFML/billiard/texture/textureBoard.png", sf::IntRect(1,1,454,848));
 	sprite.setTexture(texture);
 	sprite.setPosition(572.5f, 25.f);
 	initBorderLines();
@@ -24,7 +25,9 @@ Board::Board()
 
 Board::~Board()
 {
-
+	lines.clear();
+	holes.clear();
+		
 }
 
 void Board::initBorderLines()

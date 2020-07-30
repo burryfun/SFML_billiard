@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Window/Event.hpp>
 #include <string>
 
 
@@ -20,6 +21,7 @@ GUI::GUI()
 	player1.numberText.setString("Player 1");
 	player1.numberText.setPosition(200,100);
 	player1.numberText.setCharacterSize(40);
+
 	player1.pointsText.setCharacterSize(35);
 	player1.pointsText.setString(std::to_string(player1.points));
 	player1.pointsText.setPosition(250,170);
@@ -32,11 +34,13 @@ GUI::GUI()
 	player2.numberText.setString("Player 2\n");
 	player2.numberText.setPosition(1250,100);
 	player2.numberText.setCharacterSize(40);
+	
 	player2.pointsText.setCharacterSize(35);
 	player2.pointsText.setString(std::to_string(player2.points));
 	player2.pointsText.setPosition(1300, 170);
 
 	currentPlayer = player1;
+	gamePaused = false;
 }
 
 GUI::~GUI()
@@ -78,7 +82,15 @@ void GUI::addPoints(Player player)
 	}	
 }
 
-void GUI::update()
+void GUI::restart()
+{
+	gamePaused = false;
+	player1.points = 0;
+	player2.points = 0;
+	currentPlayer = player1;
+}
+
+void GUI::update(sf::RenderWindow* window,bool& isPaused, bool& isRestart, sf::Vector2f mouse, sf::Event event)
 {
 	player1.numberText.setString("Player 1");
 	player1.pointsText.setString(std::to_string(player1.points));
@@ -88,19 +100,26 @@ void GUI::update()
 	player2.numberText.setOutlineThickness(0.f);
 	if (currentPlayer.number == 0)
 	{
-		player1.numberText.setOutlineThickness(1.f);
-		player1.numberText.setOutlineColor(sf::Color::Cyan);
+		player1.numberText.setOutlineThickness(3.f);
+		player1.numberText.setOutlineColor(sf::Color(0, 0, 0, 100));
 	}
 	if (currentPlayer.number == 1)
 	{
 		player2.numberText.setOutlineThickness(1.f);
-		player2.numberText.setOutlineColor(sf::Color::Cyan);
+		player2.numberText.setOutlineColor(sf::Color(0, 0, 0, 200));
 	}
-
+	
+	menu.update(window, isPaused, isRestart, mouse, event);
 }
 
 void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+
+	if (gamePaused)
+	{
+		target.draw(menu);
+	}
+
 	target.draw(player1.numberText);
 	target.draw(player1.pointsText);
 	target.draw(player2.numberText);

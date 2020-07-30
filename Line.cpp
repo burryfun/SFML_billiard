@@ -35,7 +35,7 @@ Line::Line(float x1, float y1, float x2, float y2, sf::Color color)
 
 Line::~Line()
 {
-
+	m_points.clear();
 }
 
 sf::VertexArray Line::getPoints()

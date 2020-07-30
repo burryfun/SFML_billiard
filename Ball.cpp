@@ -5,8 +5,8 @@
 
 void Ball::initVariables()
 {
-	MAX_POINTS = 40;
-	VISCOSITY = 0.5f;
+	MAX_POINTS = 20;
+	VISCOSITY = 1.f;
 	COLOR_SHAPE = sf::Color::Red;
 
 	m_radius = 10.f;
@@ -15,6 +15,7 @@ void Ball::initVariables()
 	m_velocity = sf::Vector2f(0.f, 0.f);
 	m_acceleration = sf::Vector2f(0.f, 0.f);
 	m_vertices.setPrimitiveType(sf::TrianglesFan);
+	m_vertices.clear();
 	m_vertices.resize(MAX_POINTS);
 	m_color = COLOR_SHAPE;
 	m_mass = m_radius;
@@ -23,17 +24,14 @@ void Ball::initVariables()
 
 void Ball::initShape()
 {
-	float x = m_center.x + m_radius * cos((m_angle)/(static_cast<float>(MAX_POINTS-2)) * M_PI/180.f);
-	float y = m_center.x + m_radius * sin((m_angle)/(static_cast<float>(MAX_POINTS-2)) * M_PI/180.f);
+	float x = 0.f;
+	float y = 0.f;
 
-	for (int i = 0; i != MAX_POINTS-1; i++)
+	for (unsigned long i = 0; i != MAX_POINTS-1; i++)
 	{
 		x = m_center.x + m_radius * cos(((360.f)/(static_cast<float>(MAX_POINTS-2)) * i + m_angle) * M_PI/180.f);
 		y = m_center.y + m_radius * sin(((360.f)/(static_cast<float>(MAX_POINTS-2)) * i + m_angle) * M_PI/180.f);
 		m_vertices[i] = sf::Vertex(sf::Vector2f(x, y), m_color);
-		m_vertices[MAX_POINTS].position = m_vertices[0].position;	
-		m_vertices[MAX_POINTS - 1] = sf::Vertex(sf::Vector2f(m_center.x, m_center.y), sf::Color::White);
-			
 	}	
 }
 
@@ -50,14 +48,33 @@ Ball::Ball(sf::Vector2f center, float radius, sf::Color color)
 	m_radius = radius;
 	COLOR_SHAPE = color;
 	m_color = COLOR_SHAPE;
-	m_velocity = sf::Vector2f(0.f, 0.f);
-	m_acceleration = sf::Vector2f(0.f, 0.f);
-	m_mass = 10.f*m_radius;
+	m_mass = m_radius;
+	initShape();
+}
+
+Ball::Ball(const Ball& other)
+{
+	initVariables();
+	m_center = other.m_center;
+	m_radius = other.m_radius;
+	COLOR_SHAPE = other.m_color;
+	m_color = COLOR_SHAPE;
+}
+
+Ball& Ball::operator=(const Ball& other)
+{
+	m_vertices.clear();
+	m_vertices = other.m_vertices;
+	m_center = other.m_center;
+	m_radius = other.m_radius;
+	COLOR_SHAPE = other.m_color;
+	m_color = COLOR_SHAPE;
+	return *this;
 }
 
 Ball::~Ball()
 {
-
+	m_vertices.clear(); 
 }
 
 void Ball::setPosition(float x, float y)
@@ -115,7 +132,6 @@ float Ball::getMass()
 
 void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(drawableCircle);
 	target.draw(m_vertices);
 }
 
@@ -127,7 +143,7 @@ void Ball::move(sf::Vector2f velocity)
 void Ball::setAngle(float angle)
 {
 	m_angle = angle;
-	initShape();
+	//initShape();
 }
 
 void Ball::rotate(float angle)
@@ -183,7 +199,7 @@ bool Ball::checkCollisionPoint(const sf::Vector2f& mouse)
 
 void Ball::update(const sf::RenderWindow& window, float deltaTime)
 {
-	initShape();
+	//initShape();
 	updateCollisionBorder(window);
 	updateVelocity(deltaTime);
 }

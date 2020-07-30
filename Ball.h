@@ -10,14 +10,16 @@
 
 #include <cmath>
 
-class Ball : public sf::Drawable, sf::Transformable
+class Ball : public sf::Drawable
 {
 public:
 	
 	Ball();
 	Ball(sf::Vector2f center, float radius, sf::Color color);
 	~Ball();
-
+	// Оператор копирования и оператор присваивания	
+	Ball(const Ball&);
+	Ball& operator=(const Ball&);
 	void			setPosition(float x, float y);
 	void			setAngle(float angle);
 	void			setAcceleration(sf::Vector2f acceleration);
@@ -39,9 +41,8 @@ public:
 	void			update(const sf::RenderWindow& window, float deltaTime);
 	void			render();
 private:
-	int				MAX_POINTS;
+	unsigned int				MAX_POINTS;
 	float			VISCOSITY; //Коэф-т вязкости
-	sf::CircleShape drawableCircle;
 	sf::VertexArray m_vertices;
 	sf::Color		COLOR_SHAPE;
 	sf::Color		m_color;

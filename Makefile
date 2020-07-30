@@ -1,7 +1,7 @@
 all: main
 
-main: main.o Game.o Ball.o Board.o Line.o GUI.o
-	g++ main.o Game.o Ball.o Board.o Line.o GUI.o -o main -lsfml-graphics -lsfml-window -lsfml-system
+main: main.o Game.o Ball.o Board.o Line.o GUI.o Menu.o Button.o
+	g++ main.o Game.o Ball.o Board.o Line.o GUI.o Menu.o Button.o -o main -lsfml-graphics -lsfml-window -lsfml-system
 
 main.o: main.cpp
 	g++ -c main.cpp
@@ -20,6 +20,12 @@ Line.o: Line.cpp
 
 GUI.o: GUI.cpp
 	g++ -c GUI.cpp
+
+Menu.o: Menu.cpp
+	g++ -c Menu.cpp
+
+Button.o: Button.cpp
+	g++ -c Button.cpp
 
 clean:
 	rm -rf *.o

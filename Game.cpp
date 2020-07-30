@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "Ball.h"
+#include "Board.h"
+#include "GUI.h"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -23,8 +25,14 @@ void Game::initWindow()
 	videoMode = sf::VideoMode(1600, 900);
 	window = new sf::RenderWindow(videoMode, "Billiarrd", sf::Style::Default);
 	window->setFramerateLimit(60);
-	
-	black = new Ball(sf::Vector2f(800, 500), ballRadius, sf::Color::Black);
+}
+
+void Game::initGame()
+{
+	restartGame = false;
+	gui = new GUI();
+	board = new Board();
+	black = new Ball(sf::Vector2f(800, 500), ballRadius, sf::Color::Black);	
 	//initialization whiteBalls field
 	for (int i = 0; i != 5; i++)
 	{
@@ -34,7 +42,7 @@ void Game::initWindow()
 										ballRadius, sf::Color::White);
 			whiteBalls.push_back(newBall);
 		}
-	}	
+	}
 	dragged = false;
 	move = false;
 	goal = false;
@@ -43,11 +51,37 @@ void Game::initWindow()
 Game::Game()
 {
 	initWindow();
+	initGame();
 }
 
 Game::~Game()
 {
+	whiteBalls.clear();
+	delete black;
+	delete board;
+	delete gui;
+	delete window;
+}
 
+void Game::restart()
+{
+	gui->restart();
+	black->setPosition(800, 500);
+	black->setVelocity(sf::Vector2f(0.f, 0.f));	
+	int count = 0;
+	for (int i = 0; i != 5; i++)
+	{
+		for (int j = 0; j != i+1; j++)
+		{
+			whiteBalls[count]->setPosition(800-i*(ballRadius+2) + (2*ballRadius+4)*j, 250 - 2*ballRadius*i);
+			whiteBalls[count]->setVelocity(sf::Vector2f(0.f,0.f));
+			count++;
+		}
+	}	
+	dragged = false;
+	move = false;
+	goal = false;
+	restartGame = false;
 }
 
 void Game::pollEvents()
@@ -62,23 +96,33 @@ void Game::pollEvents()
 			case sf::Event::KeyPressed:
 				if (sfmlEvent.key.code == sf::Keyboard::Escape)
 				{
-					window->close();
+					gui->gamePaused = 1 - gui->gamePaused;
 				}
 			case sf::Event::MouseButtonPressed:
 				if (sfmlEvent.mouseButton.button == sf::Mouse::Right)
 				{
 					if (black->checkCollisionPoint(m_mouse))
 					{
-						//draggedCircle = circle;
+						draggedBall = black;
 						dragged = true;
+					}
+					for (auto whiteBall : whiteBalls)
+					{
+						if (whiteBall->checkCollisionPoint(m_mouse))
+						{
+							draggedBall = whiteBall;
+							dragged = true;
+							//direction->getPoints()[0].position = draggedBall->getPosition();
+							//direction->getPoints()[1].position = m_mouse;
+						}
 					}
 				}
 				break;
 			case sf::Event::MouseButtonReleased:
 				if (sfmlEvent.mouseButton.button == sf::Mouse::Right && dragged)
 				{
-					black->setVelocity(sf::Vector2f((black->getPosition().x - m_mouse.x),
-															(black->getPosition().y - m_mouse.y)));
+					draggedBall->setVelocity(sf::Vector2f((draggedBall->getPosition().x - m_mouse.x),
+															(draggedBall->getPosition().y - m_mouse.y)));
 					dragged = false;
 					move = true;
 				}
@@ -148,7 +192,7 @@ void Game::collisionCircleHole(Ball *circle, Line *hole)
 	sf::Vector2f distance = p - st;
 	float distanceBetween = sqrtf(distance.x*distance.x + distance.y*distance.y);
 		
-	if (distanceBetween <= circle->getRadius())
+	if (distanceBetween <= circle->getRadius() && (t > -0.f && t < 1.f))
 	{
 		goal = true;
 		static int pos = 0;
@@ -204,17 +248,25 @@ void Game::collisionCircles(Ball* ball1, Ball* ball2)
 	}
 }
 
-
-
-void Game::update()
+void Game::updateGameLogic()
 {
-	float deltaTime = 0.f;
-	deltaTime = clock.restart().asSeconds();
-	pollEvents();
-	gui.update();
+	if (goal)
+	{
+		gui->addPoints(gui->getCurrentPlayer());
+		goal = false;
+	}
+	if (move && draggedBall->getVelocity() == sf::Vector2f(0.f, 0.f))
+	{
+		move = false;
+		gui->setCurrentPlayer(1 - gui->getCurrentPlayer().number);
+	}
+}
+
+void Game::updateAllCollisions()
+{
 	for (auto whiteBall : whiteBalls)
 	{
-		for (Line line : board.getBorderLines())
+		for (Line line : board->getBorderLines())
 		{
 			collisionCircleLine(whiteBall, &line);
 			collisionCircleLine(black, &line);
@@ -224,40 +276,62 @@ void Game::update()
 			collisionCircles(whiteBall, whiteBall2);
 		}
 		collisionCircles(black, whiteBall);
-		whiteBall->update(*window, deltaTime);
-
-
-		std::cout << gui.getCurrentPlayer().number << std::endl;
-		for (auto hole : board.getHoles())
+		for (auto hole : board->getHoles())
 		{
 			collisionCircleHole(whiteBall, &hole);
 		}
-		//gameLogic
-		if (goal)
-		{
-			gui.addPoints(gui.getCurrentPlayer());
-			goal = false;
-		}
-		if (move && black->getVelocity() == sf::Vector2f(0.f, 0.f))
-		{
-			move = false;
-			gui.setCurrentPlayer(1 - gui.getCurrentPlayer().number);
-		}
-
 	}
-	black->update(*window, deltaTime);
+}
+
+void Game::update()
+{
+	float deltaTime = 0.f;
+	deltaTime = clock.restart().asSeconds();
+	pollEvents();
+	//test/////////////////////
+	if (dragged)
+	{
+		sf::Vector2f distance = (m_mouse - draggedBall->getPosition());
+		float distanceBetween = sqrt(distance.x*distance.x + distance.y*distance.y);
+		sf::Vector2f invert = distance / distanceBetween;
+		direction = new Line(draggedBall->getPosition().x, draggedBall->getPosition().y, 
+								draggedBall->getPosition().x - distanceBetween *invert.x, 
+									draggedBall->getPosition().y - distanceBetween*invert.y);
+	}
+	//////////////////////////////////
+	gui->update(window,gui->gamePaused, restartGame, m_mouse, sfmlEvent);
+	updateGameLogic();
+	if (!gui->gamePaused)
+	{
+		for (auto whiteBall : whiteBalls)
+		{
+			whiteBall->update(*window, deltaTime);
+		}
+		black->update(*window, deltaTime);
+		updateAllCollisions();
+	}
+	if (restartGame)
+	{
+		restart();
+	}
 }
 
 void Game::render()
 {
-	window->clear();
-	window->draw(gui);	
-	board.render(window);
+	window->clear(sf::Color(75, 103, 163));
+	
+	board->render(window);
 	for (auto i : whiteBalls)
 	{
 		window->draw(*i);
 	}
 	window->draw(*black);	
+	window->draw(*gui);	
 	
+	if (dragged)
+	{
+		window->draw(*direction);
+	}	
+
 	window->display();
 }
