@@ -10,8 +10,6 @@
 GUI::GUI()
 {
 	font.loadFromFile("/usr/share/fonts/truetype/freefont/FreeSerif.ttf");
-	text.setFont(font);
-	
 
 	player1.points = 0;
 	player1.number = 0;

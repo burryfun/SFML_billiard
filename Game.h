@@ -51,4 +51,8 @@ private:
 	const float			ballRadius = 9.f;
 	void				initWindow();
 	void				initGame();
+
+
+	sf::Font font;
+	sf::Text FPS;
 };

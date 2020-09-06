@@ -38,7 +38,6 @@ public:
 	void update(sf::RenderWindow* window, bool& isPaused, bool& isRestart, sf::Vector2f mouse, sf::Event event);
 private:
 	sf::Font font;
-	sf::Text text;
 	
 	Menu menu;	
 	Player player1;

@@ -3,9 +3,11 @@
 #include "Board.h"
 #include "GUI.h"
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -14,6 +16,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <string>
 
 const bool Game::running() const
 {
@@ -285,10 +288,19 @@ void Game::updateAllCollisions()
 
 void Game::update()
 {
+	// FPS
 	float deltaTime = 0.f;
 	deltaTime = clock.restart().asSeconds();
+
+	font.loadFromFile("/usr/share/fonts/truetype/freefont/FreeSerif.ttf");
+	FPS.setFont(font);
+	FPS.setString("FPS: " + std::to_string(1/deltaTime));
+	FPS.setCharacterSize(25);
+	FPS.setPosition(50,30);
+	
 	pollEvents();
-	//test/////////////////////
+	
+	// TEST DIRECTION FORCE
 	if (dragged)
 	{
 		sf::Vector2f distance = (m_mouse - draggedBall->getPosition());
@@ -335,6 +347,8 @@ void Game::render()
 	{
 		window->draw(*direction);
 	}	
+	
+	window->draw(FPS);
 
 	window->display();
 }
