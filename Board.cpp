@@ -13,7 +13,7 @@
 
 Board::Board()
 {
-	texture.loadFromFile("/home/user/C++/SFML/billiard/texture/textureBoard.png", sf::IntRect(1,1,454,848));
+	texture.loadFromFile("/home/user/C++/SFML/billiard/images/textureBoard.png", sf::IntRect(1,1,454,848));
 	sprite.setTexture(texture);
 	sprite.setPosition(572.5f, 25.f);
 	initBorderLines();
