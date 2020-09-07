@@ -5,10 +5,6 @@
 #include <SFML/Window/Mouse.hpp>
 #include <string>
 
-Button::Button()
-{
-
-}
 
 Button::Button(std::string str, sf::Vector2f pos)
 {

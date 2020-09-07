@@ -18,7 +18,6 @@
 class Button : public sf::Drawable
 {
 public:
-	Button();
 	Button(std::string, sf::Vector2f pos);
 	~Button();
 		

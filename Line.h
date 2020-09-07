@@ -29,8 +29,6 @@ public:
 private:
 	sf::VertexArray m_points;
 	sf::Color m_color;
-	void initVariables();
-	void initShape();
 	virtual void	draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

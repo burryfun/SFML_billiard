@@ -16,9 +16,6 @@ Menu::Menu()
 	Button* btnContinue =	new Button("Continue", sf::Vector2f(700.f, 250.f));
 	Button* btnNewGame  =	new Button("New Game", sf::Vector2f(700.f, 350.f));
 	Button* btnExit		=	new Button("Exit", sf::Vector2f(700.f, 550.f));
-	/*buttons.push_back(btnContinue);
-	buttons.push_back(btnNewGame);
-	buttons.push_back(btnExit);*/
 	buttons.insert(std::pair<Button::btnType, Button*>(Button::CONTINUE, btnContinue));
 	buttons.insert(std::pair<Button::btnType, Button*>(Button::NEW_GAME, btnNewGame));
 	buttons.insert(std::pair<Button::btnType, Button*>(Button::EXIT, btnExit));

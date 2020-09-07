@@ -17,17 +17,13 @@ Board::Board()
 	sprite.setTexture(texture);
 	sprite.setPosition(572.5f, 25.f);
 	initBorderLines();
-	
-	
 	initHoles();
-
 }
 
 Board::~Board()
 {
 	lines.clear();
 	holes.clear();
-		
 }
 
 void Board::initBorderLines()

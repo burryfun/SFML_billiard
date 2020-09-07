@@ -19,7 +19,6 @@ public:
 	Menu();
 	~Menu();
 	void update(sf::RenderWindow* window, bool& isPaused, bool& isRestart, sf::Vector2f mouse, sf::Event event);
-	//std::vector <Button*> buttons;
 	std::map <Button::btnType, Button*> buttons;
 
 private:

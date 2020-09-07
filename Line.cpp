@@ -7,16 +7,6 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/Vector2.hpp>
 
-void Line::initVariables()
-{
-
-}
-
-void Line::initShape()
-{
-
-}
-
 Line::Line()
 {
 
@@ -24,7 +14,6 @@ Line::Line()
 
 Line::Line(float x1, float y1, float x2, float y2, sf::Color color)
 {
-	//m_points.resize(0);
 	m_color = color;
 	sf::Vertex start = sf::Vertex(sf::Vector2f(x1, y1), m_color);
 	sf::Vertex end = sf::Vertex(sf::Vector2f(x2, y2), m_color);
