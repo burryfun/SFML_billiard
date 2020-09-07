@@ -103,8 +103,8 @@ void GUI::update(sf::RenderWindow* window,bool& isPaused, bool& isRestart, sf::V
 	}
 	if (currentPlayer.number == 1)
 	{
-		player2.numberText.setOutlineThickness(1.f);
-		player2.numberText.setOutlineColor(sf::Color(0, 0, 0, 200));
+		player2.numberText.setOutlineThickness(3.f);
+		player2.numberText.setOutlineColor(sf::Color(0, 0, 0, 100));
 	}
 	
 	menu.update(window, isPaused, isRestart, mouse, event);
