@@ -103,8 +103,6 @@ sf::Vector2f Ball::getVelocity()
 
 void Ball::updateVelocity(float deltaTime)
 {
-	//std::cout << deltaTime << std::endl;
-	//std::cout << getVelocity().x << " " << getVelocity().y << std::endl; 
 	m_acceleration = -m_velocity * VISCOSITY;
 	m_velocity += m_acceleration * deltaTime;
 	setPosition(m_center.x + m_velocity.x*deltaTime, m_center.y + m_velocity.y*deltaTime);
@@ -143,7 +141,6 @@ void Ball::move(sf::Vector2f velocity)
 void Ball::setAngle(float angle)
 {
 	m_angle = angle;
-	//initShape();
 }
 
 void Ball::rotate(float angle)
@@ -153,7 +150,6 @@ void Ball::rotate(float angle)
 
 void Ball::updateCollisionBorder(const sf::RenderWindow& window)
 {
-	//std::cout << m_center.x << " " << m_center.y << std::endl;
 	if ((m_center.x + m_radius) > window.getSize().x)
 	{
 		setPosition(window.getSize().x - m_radius, m_center.y);
@@ -184,10 +180,6 @@ bool Ball::checkCollisionPoint(const sf::Vector2f& mouse)
 	if ( ((x_mouse - m_center.x)*(x_mouse - m_center.x) +
 		  (y_mouse - m_center.y)*(y_mouse - m_center.y)) <= m_radius*m_radius )
 	{
-		for (int i = 0; i != MAX_POINTS; i++)
-		{
-			m_color = sf::Color::Cyan;
-		}
 		return true;
 	}
 	m_color = COLOR_SHAPE;
@@ -199,7 +191,6 @@ bool Ball::checkCollisionPoint(const sf::Vector2f& mouse)
 
 void Ball::update(const sf::RenderWindow& window, float deltaTime)
 {
-	//initShape();
 	updateCollisionBorder(window);
 	updateVelocity(deltaTime);
 }

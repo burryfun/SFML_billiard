@@ -41,7 +41,7 @@ public:
 	void			update(const sf::RenderWindow& window, float deltaTime);
 	void			render();
 private:
-	unsigned int				MAX_POINTS;
+	unsigned int	MAX_POINTS;
 	float			VISCOSITY; //Коэф-т вязкости
 	sf::VertexArray m_vertices;
 	sf::Color		COLOR_SHAPE;
