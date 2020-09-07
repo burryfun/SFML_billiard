@@ -32,11 +32,12 @@ public:
 	bool dragged;
 	bool move;
 	bool goal;
+	
 	void pollEvents();
 	void collisionCircleLine(Ball* circle, Line* line);
 	void collisionCircles(Ball* ball1, Ball* ball2);
 	void collisionCircleHole(Ball* circle, Line* hole);
-	
+	void updateDirectionLine();
 	void restart();	
 	void updateAllCollisions();
 	void updateGameLogic();

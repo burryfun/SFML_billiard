@@ -162,16 +162,16 @@ void Game::collisionCircleLine(Ball *circle, Line *line)
 	float dotProductTangential = circle->getVelocity().x*tangential.x + 
 									circle->getVelocity().y * tangential.y;
 
+	float overlap = distanceBetween - circle->getRadius();
 	if (distanceBetween <= circle->getRadius())
 	{
 		if (t > -0.f && t < 1.f)
 		{
+			circle->setPosition(p.x - distance.x * overlap / distanceBetween, 
+									p.y -distance.y * overlap / distanceBetween);
 			circle->setVelocity(sf::Vector2f(-normal.x*dotProductNormal + tangential.x*dotProductTangential,
 												-normal.y*dotProductNormal + tangential.y*dotProductTangential));
 		
-			float overlap = distanceBetween - circle->getRadius();
-			circle->setPosition(p.x - distance.x * overlap / distanceBetween, 
-									p.y -distance.y * overlap / distanceBetween);
 		}
 	}
 }
@@ -286,6 +286,22 @@ void Game::updateAllCollisions()
 	}
 }
 
+void Game::updateDirectionLine()
+{
+	
+	if (dragged)
+	{
+		sf::Vector2f distance = (m_mouse - draggedBall->getPosition());
+		float distanceBetween = sqrt(distance.x*distance.x + distance.y*distance.y);
+		sf::Vector2f invert = distance / distanceBetween;
+		sf::Color directionColor = sf::Color(255, (255 - ((int)distanceBetween/2)%255), 0);
+		if (distanceBetween > 510) { directionColor = sf::Color::Red; }
+		direction = new Line(draggedBall->getPosition().x, draggedBall->getPosition().y, 
+								draggedBall->getPosition().x - distanceBetween * invert.x, 
+									draggedBall->getPosition().y - distanceBetween * invert.y, directionColor);
+	}
+}
+
 void Game::update()
 {
 	// FPS
@@ -300,20 +316,7 @@ void Game::update()
 	
 	pollEvents();
 	
-	// TEST DIRECTION FORCE
-	if (dragged)
-	{
-		sf::Vector2f distance = (m_mouse - draggedBall->getPosition());
-		float distanceBetween = sqrt(distance.x*distance.x + distance.y*distance.y);
-		sf::Vector2f invert = distance / distanceBetween;
-		std::cout << 205 + distanceBetween/255 << " " << (255 - (int)distanceBetween%255)<< std::endl;
-		sf::Color directionColor = sf::Color(255, (255 - (int)distanceBetween%255), 0);
-		if (distanceBetween > 255) { directionColor = sf::Color::Red; }
-		direction = new Line(draggedBall->getPosition().x, draggedBall->getPosition().y, 
-								draggedBall->getPosition().x - distanceBetween * 1.5*invert.x, 
-									draggedBall->getPosition().y - distanceBetween * 1.5*invert.y, directionColor);
-	}
-	//////////////////////////////////
+	updateDirectionLine();
 	gui->update(window,gui->gamePaused, restartGame, m_mouse, sfmlEvent);
 	updateGameLogic();
 	if (!gui->gamePaused)
