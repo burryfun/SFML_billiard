@@ -115,8 +115,6 @@ void Game::pollEvents()
 						{
 							draggedBall = whiteBall;
 							dragged = true;
-							//direction->getPoints()[0].position = draggedBall->getPosition();
-							//direction->getPoints()[1].position = m_mouse;
 						}
 					}
 				}
