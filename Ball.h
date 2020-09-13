@@ -26,7 +26,7 @@ public:
 	void			setVelocity(sf::Vector2f velocity);
 	
 	sf::Vector2f	getPosition();
-	sf::Vector2f	getVelocity();
+	const sf::Vector2f	getVelocity() const;
 	sf::Vector2f	getAcceleration();
 	float			getRadius();
 	float			getMass();

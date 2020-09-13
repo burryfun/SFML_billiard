@@ -2,6 +2,8 @@
 #include "Ball.h"
 #include "Board.h"
 #include "GUI.h"
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -16,6 +18,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <cmath>
 #include <string>
 
 const bool Game::running() const
@@ -49,6 +52,20 @@ void Game::initGame()
 	dragged = false;
 	move = false;
 	goal = false;
+
+	// INIT SOUNDS
+	buffer = new sf::SoundBuffer;
+	buffer->loadFromFile("./sfx/Circles.wav");
+	sound[CIRCLES].setBuffer(*buffer);
+	buffer = new sf::SoundBuffer;
+	buffer->loadFromFile("./sfx/CircleBoard.wav");
+	sound[CIRCLEBOARD].setBuffer(*buffer);
+	buffer = new sf::SoundBuffer;
+	buffer->loadFromFile("./sfx/Cue.wav");
+	sound[CUE].setBuffer(*buffer);
+	buffer = new sf::SoundBuffer;
+	buffer->loadFromFile("./sfx/CircleHole.wav");
+	sound[CIRCLEHOAL].setBuffer(*buffer);
 }
 
 Game::Game()
@@ -126,6 +143,8 @@ void Game::pollEvents()
 															(draggedBall->getPosition().y - m_mouse.y)));
 					dragged = false;
 					move = true;
+				
+					playSFX(CUE, draggedBall);	
 				}
 				break;
 
@@ -169,7 +188,8 @@ void Game::collisionCircleLine(Ball *circle, Line *line)
 									p.y -distance.y * overlap / distanceBetween);
 			circle->setVelocity(sf::Vector2f(-normal.x*dotProductNormal + tangential.x*dotProductTangential,
 												-normal.y*dotProductNormal + tangential.y*dotProductTangential));
-		
+			
+			playSFX(CIRCLEBOARD, circle);
 		}
 	}
 }
@@ -195,13 +215,15 @@ void Game::collisionCircleHole(Ball *circle, Line *hole)
 		
 	if (distanceBetween <= circle->getRadius() && (t > -0.f && t < 1.f))
 	{
+		
+		playSFX(CIRCLEHOAL, circle);
+		
 		goal = true;
 		static int pos = 0;
 		circle->setVelocity(sf::Vector2f(0.f, 0.f));
 		circle->setPosition(ballRadius + pos, ballRadius);
 		pos += 2*ballRadius;
 	}
-
 }
 
 void Game::collisionCircles(Ball* ball1, Ball* ball2)
@@ -245,8 +267,17 @@ void Game::collisionCircles(Ball* ball1, Ball* ball2)
 			ball1->setVelocity(dotProductTangential1*tangential + m1*normal);
 			ball2->setVelocity(dotProductTangential2*tangential + m2*normal);
 			
+			playSFX(CIRCLES, ball1);
 		}
 	}
+}
+
+void Game::playSFX(const int sfxType, const Ball* obj)
+{
+	sf::Vector2f vol = obj->getVelocity();
+	float volume = sqrtf(vol.x*vol.x + vol.y*vol.y)/5.f;
+	sound[sfxType].setVolume(volume);
+	sound[sfxType].play();
 }
 
 void Game::updateGameLogic()

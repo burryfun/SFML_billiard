@@ -96,7 +96,7 @@ void Ball::setVelocity(sf::Vector2f velocity)
 	m_velocity = velocity;
 }
 
-sf::Vector2f Ball::getVelocity()
+const sf::Vector2f Ball::getVelocity() const
 {
 	return m_velocity;
 }
