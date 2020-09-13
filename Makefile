@@ -1,7 +1,8 @@
 all: main
 
 main: main.o Game.o Ball.o Board.o Line.o GUI.o Menu.o Button.o
-	g++ main.o Game.o Ball.o Board.o Line.o GUI.o Menu.o Button.o -o main -lsfml-graphics -lsfml-window -lsfml-system
+	g++ main.o Game.o Ball.o Board.o Line.o GUI.o Menu.o Button.o -o main \
+		-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 main.o: main.cpp
 	g++ -c main.cpp
